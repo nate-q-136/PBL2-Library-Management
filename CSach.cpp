@@ -34,14 +34,14 @@ menustart:
     cout << "\t\t\t-----------------------------" << endl;
     cout << "\t\t\t| LIBRARY SYSTEM |" << endl;
     cout << "\t\t\t-----------------------------" << endl;
-    cout << "\t\t\t 0. Enter The Number Of Books Name" << endl;
-    cout << "\t\t\t 1. Enter New Record" << endl;
-    cout << "\t\t\t 2. Display Record" << endl;
-    cout << "\t\t\t 3. Modify Record" << endl;
-    cout << "\t\t\t 4. Search Record" << endl;
-    cout << "\t\t\t 5. Delete Record" << endl;
+    cout << "\t\t\t 0. Enter The Number Of Books Data To Add To Library " << endl;
+    cout << "\t\t\t 1. Enter New Book Record" << endl;
+    cout << "\t\t\t 2. Display All Book Records" << endl;
+    cout << "\t\t\t 3. Modify 1 Book Record" << endl;
+    cout << "\t\t\t 4. Search 1 Book Record" << endl;
+    cout << "\t\t\t 5. Delete 1 Book Record" << endl;
     cout << "\t\t\t 6. Show Available Books" << endl;
-    cout << "\t\t\t 7. Input Data to Data.txt" << endl;
+    cout << "\t\t\t 7. Input Data from Data.txt" << endl;
     cout << "\t\t\t 8. Exit\n"
         << endl;
 
@@ -117,7 +117,7 @@ menustart:
         goto menustart;
         break;
     case '7':
-        input_data_from_file();
+        input_data_to_file();
         cout << "Press any key to back to Menu...";
         getch();
         goto menustart;
@@ -132,20 +132,34 @@ menustart:
     getch();
     goto menustart;
 }
+void CSach::upper_Name(string &s)
+{
+    for (int i = 0; i < s.length(); i++)
+    {
+        if ('a' <= s[i] && s[i] <= 'z')
+        {
+            s[i] = s[i] - ((int)('a') - (int)('A'));
+        }
+    }
+}
 void CSach::insert() // Add books details
 {
     system("cls");
     fstream file;
     cout << "\n-------------------------------------------------------------------------------------------------------" << endl;
     cout << "------------------------------------- Add Book Details ---------------------------------------------" << endl;
+   bookdetail:
     cout << "\t\t\tEnter Name: ";
     cin.ignore();
     getline(cin,Book_Name);
+    upper_Name(Book_Name);
+    
     cout << "\t\t\tEnter Total Books: ";
     cin >> Total_Book_Name;
     cout << "\t\t\tEnter Books are being borrowed: ";
     cin >> Borrowed_Book;
-    file.open("LibraryRecord.txt", ios::app | ios::out);
+    file.open("LibraryRecord.txt", ios::app | ios::out);   
+    
     file << " " << Book_Name << " " << Total_Book_Name << " " << Borrowed_Book << "\n";
     file.close();
 }
@@ -187,7 +201,7 @@ void CSach::modify() // Modify details of library
 {
     system("cls");
     fstream file, file1;
-    string rollno;
+    string Modified_Book;
     int found = 0;
     cout << "\n-------------------------------------------------------------------------------------------------------" << endl;
     cout << "------------------------------------- Book Modify Details ------------------------------------------" << endl;
@@ -201,12 +215,13 @@ void CSach::modify() // Modify details of library
     {
         cout << "\nEnter Name Of A Book You Want To Modify: ";
         cin.ignore();
-        getline(cin, rollno);
+        getline(cin, Modified_Book);
+        upper_Name(Modified_Book);
         file1.open("record.txt", ios::app | ios::out);
         file >> Book_Name >> Total_Book_Name >> Borrowed_Book;
         while (!file.eof())
         {
-            if (rollno != Book_Name)
+            if (Modified_Book != Book_Name)
                 file1 << " " << Book_Name << " " << Total_Book_Name << " " << Borrowed_Book << "\n";
             else
             {
@@ -233,6 +248,7 @@ void CSach::modify() // Modify details of library
 }
 
 void CSach::search() // search data of library
+// chua xong phan tim kiem nang cao
 {
     system("cls");
     fstream file;
@@ -246,38 +262,45 @@ void CSach::search() // search data of library
     }
     else
     {
-        string rollno;
+        string Find_Book;
+        int check_Find_Book;
         cout << "\n-------------------------------------------------------------------------------------------------------" << endl;
         cout << "------------------------------------- Book Search Table --------------------------------------------" << endl;
-        cout << "\nEnter Roll No. of Student which you want to search: ";
+        cout << "\nEnter Book's Name which you want to search: ";
         cin.ignore();
-        getline(cin, rollno);
+        getline(cin, Find_Book);
+        
+        upper_Name(Find_Book);
         file >> Book_Name >> Total_Book_Name >> Borrowed_Book;
         while (!file.eof())
         {
-            if (rollno == Book_Name)
+
+            if (Find_Book== Book_Name)
             {
                 cout << "\n\n\t\t\t Information of " << Book_Name << "\n";
                 cout << "\t\t\tTotal Books.: " << Total_Book_Name << "\n";
                 cout << "\t\t\tNumber of Books are being Borrowed: " << Borrowed_Book << "\n";
-
                 found++;
+                
             }
-            file >> Book_Name >> Total_Book_Name >> Borrowed_Book;
-            if (found == 0)
-            {
-                cout << "\n\t\t\t Your Wanted Book Not Found....";
-            }
+            
+                file >> Book_Name >> Total_Book_Name >> Borrowed_Book;
+                if (found == 0)
+                {
+                    cout << "\n\t\t\t Your Wanted Book Not Found....";
+                }
         }
+        
         file.close();
     }
+      
 }
 void CSach::deleted() // deleted data of library
 {
     system("cls");
     fstream file, file1;
     int found = 0;
-    string roll;
+    string Deleted_Book;
     cout << "\n-------------------------------------------------------------------------------------------------------" << endl;
     cout << "------------------------------------- Delete Book Details ------------------------------------------" << endl;
     file.open("LibraryRecord.txt", ios::in);
@@ -288,14 +311,14 @@ void CSach::deleted() // deleted data of library
     }
     else
     {
-        cout << "\nEnter Roll No. of Student which you want Delete Data: ";
+        cout << "\nEnter Name of a Book which you want Delete Data: ";
         cin.ignore();
-        getline(cin, roll);
+        getline(cin, Deleted_Book);
         file1.open("record.txt", ios::app | ios::out);
         file >> Book_Name >> Total_Book_Name >> Borrowed_Book;
         while (!file.eof())
         {
-            if (roll != Book_Name)
+            if (Deleted_Book != Book_Name)
             {
                 file1 << " " << Book_Name << " " << Total_Book_Name << " " << Borrowed_Book << "\n";
             }
@@ -367,10 +390,11 @@ void CSach::input_data_to_file()
         fileout.open("LibraryRecord.txt", ios::app | ios::out);
         while (!filein.eof())
         {
+            upper_Name(Book_Name);
             fileout << Book_Name << " " << Total_Book_Name << " " << Borrowed_Book << "\n";
             filein >> Book_Name >> Total_Book_Name >> Borrowed_Book;
         }
-        cout << "\t\t\t Data input successfully...\n";
+        cout << "\t\t\t Data inputed successfully...\n";
 
     }
     filein.close();
