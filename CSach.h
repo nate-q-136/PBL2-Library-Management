@@ -18,10 +18,12 @@ public:
     void Book_Existing();
     void add_Num_Book();
     void menu();
+    
     void insert();
     void display();
     void modify();
     void search();
     void deleted();
     void input_data_to_file();
+    
 };
