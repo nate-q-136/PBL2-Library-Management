@@ -66,10 +66,12 @@ menustart:
         {
             if (Num_Name_Book>0)
             {
+                
                 insert();
                 cout << "\n\n\t\t\t Add Another Book Record (Y, N) : ";
                 cin >> x;
                 Num_Name_Book--;
+                
                 
             }
             else {
@@ -154,8 +156,9 @@ void CSach::insert() // Add books details
     cin >> Borrowed_Book;
     file.open("LibraryRecord.txt", ios::app | ios::out);
     fstream file1;
-    file1.open("LibraryRecord.txt", ios::in);
-    if (!file1.fail())
+    file1.open("check.txt", ios::in);
+# if 0
+    while(true)
     {
         
         string Same_Book_Name;
@@ -163,13 +166,23 @@ void CSach::insert() // Add books details
         int Same_Borrowed_Book;
         getline(file1, Same_Book_Name, ':');
         file1 >> Total_Same_Book_Name >> Same_Borrowed_Book;
+        string temp;
+        getline(file, temp);
         if (Same_Book_Name == Book_Name)
         {
             cout << Same_Book_Name << " already exists!! You can modify it by choose Modify 1 Book Record in Menu"<<endl;
             Num_Name_Book++;
             goto close;
         }
+        else
+        {
+            getline(file1, Same_Book_Name, ':');
+            file1 >> Total_Same_Book_Name >> Same_Borrowed_Book; 
+            string temp2;
+            getline(file, temp2);
+        }
     }
+#   endif
     
     file << Book_Name << ":" << Total_Book_Name << " " << Borrowed_Book << "\n";
 close:
@@ -190,7 +203,8 @@ void CSach::display() // Display data of library
         file.close();
     }
     else
-    {   
+    {
+        
         getline(file, Book_Name, ':');
         file >> Total_Book_Name >> Borrowed_Book;
         string temp;
@@ -350,6 +364,7 @@ void CSach::deleted() // deleted data of library
         cout << "\nEnter Name of a Book which you want Delete Data: ";
         cin.ignore();
         getline(cin, Deleted_Book);
+        transform(Deleted_Book.begin(), Deleted_Book.end(), Deleted_Book.begin(), ::toupper);
         file1.open("record.txt", ios::app | ios::out);
         getline(file, Book_Name, ':');
         file >> Total_Book_Name >> Borrowed_Book;
@@ -445,9 +460,28 @@ void CSach::input_data_to_file()
         while (!filein.eof())
         {
             transform(Book_Name.begin(), Book_Name.end(), Book_Name.begin(), ::toupper);
-            //fileout_check.open();
-            fileout << Book_Name << ":" << Total_Book_Name << " " << Borrowed_Book << "\n";
+#if 0
+            // check coincidence
+            fileout_check.open("check.txt",ios::in);
+            if (!fileout_check.fail())
+            {
+                string Same_Book_Name;
+                int Total_Same_Book_Name;
+                int Same_Borrowed_Book;
+                getline(fileout_check, Same_Book_Name, ':');
+                fileout_check >> Total_Same_Book_Name >> Same_Borrowed_Book;
+                string temp;
+                getline(fileout_check, temp);
+                if (Book_Name == Same_Book_Name)
+                {
+                    cout << Book_Name << " Already Exists... If You Want To Modify, Go to Menu And choose Option 4 \n";
+                    goto fileinnext;
+                }
+            }
+#endif
             
+            fileout << Book_Name << ":" << Total_Book_Name << " " << Borrowed_Book << "\n";
+           fileinnext:
             getline(filein, Book_Name, ':');
             filein >> Total_Book_Name >> Borrowed_Book;
             string temp2;
@@ -458,4 +492,5 @@ void CSach::input_data_to_file()
     }
     filein.close();
     fileout.close();
+    fileout_check.close();
 }
