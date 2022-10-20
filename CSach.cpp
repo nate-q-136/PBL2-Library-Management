@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <cstdlib>
 #include <string>
+#include<algorithm>
 #include <string_view>
 #include <regex>
 #include <conio.h>
@@ -132,17 +133,9 @@ menustart:
     getch();
     goto menustart;
 }
-void CSach::upper_Name(string &s)
-{
-    for (int i = 0; i < s.length(); i++)
-    {
-        if ('a' <= s[i] && s[i] <= 'z')
-        {
-            s[i] = s[i] - ((int)('a') - (int)('A'));
-        }
-    }
-}
+
 void CSach::insert() // Add books details
+// nhớ lên xem video bữa trước để làm cái tên sách có dấu cách
 {
     system("cls");
     fstream file;
@@ -152,15 +145,35 @@ void CSach::insert() // Add books details
     cout << "\t\t\tEnter Name: ";
     cin.ignore();
     getline(cin,Book_Name);
-    upper_Name(Book_Name);
+    //upper_Name(Book_Name);
+    transform(Book_Name.begin(), Book_Name.end(), Book_Name.begin(), ::toupper);
     
     cout << "\t\t\tEnter Total Books: ";
     cin >> Total_Book_Name;
     cout << "\t\t\tEnter Books are being borrowed: ";
     cin >> Borrowed_Book;
-    file.open("LibraryRecord.txt", ios::app | ios::out);   
+    file.open("LibraryRecord.txt", ios::app | ios::out);
+    fstream file1;
+    file1.open("LibraryRecord.txt", ios::in);
+    if (!file1.fail())
+    {
+        
+        string Same_Book_Name;
+        int Total_Same_Book_Name;
+        int Same_Borrowed_Book;
+        getline(file1, Same_Book_Name, ':');
+        file1 >> Total_Same_Book_Name >> Same_Borrowed_Book;
+        if (Same_Book_Name == Book_Name)
+        {
+            cout << Same_Book_Name << " already exists!! You can modify it by choose Modify 1 Book Record in Menu"<<endl;
+            Num_Name_Book++;
+            goto close;
+        }
+    }
     
-    file << " " << Book_Name << " " << Total_Book_Name << " " << Borrowed_Book << "\n";
+    file << Book_Name << ":" << Total_Book_Name << " " << Borrowed_Book << "\n";
+close:
+    file1.close();
     file.close();
 }
 void CSach::display() // Display data of library
@@ -177,16 +190,25 @@ void CSach::display() // Display data of library
         file.close();
     }
     else
-    {
-        file >> Book_Name >> Total_Book_Name >> Borrowed_Book;
+    {   
+        getline(file, Book_Name, ':');
+        file >> Total_Book_Name >> Borrowed_Book;
+        string temp;
+        getline(file, temp);
         while (!file.eof())
         {
             cout << "\n\n\t\t\tBook No.: " << total++ << endl;
             cout << "\t\t\tName: " << Book_Name << "\n";
             cout << "\t\t\tTotal Books: " << Total_Book_Name << "\n";
             cout << "\t\t\tBooks are being borrowed: " << Borrowed_Book << "\n";
-
-            file >> Book_Name >> Total_Book_Name >> Borrowed_Book;
+            
+            
+            getline(file, Book_Name, ':');
+            file >> Total_Book_Name >> Borrowed_Book;
+            string temp2;
+            getline(file, temp2);
+           //đọc kí tự '\n' dòng trên
+           
         }
         if (total == 0)
         {
@@ -216,13 +238,18 @@ void CSach::modify() // Modify details of library
         cout << "\nEnter Name Of A Book You Want To Modify: ";
         cin.ignore();
         getline(cin, Modified_Book);
-        upper_Name(Modified_Book);
+        transform(Modified_Book.begin(),Modified_Book.end(),Modified_Book.begin(),::toupper);
         file1.open("record.txt", ios::app | ios::out);
-        file >> Book_Name >> Total_Book_Name >> Borrowed_Book;
+        getline(file, Book_Name, ':');
+        file >> Total_Book_Name >> Borrowed_Book;
+        string temp;
+        getline(file, temp);
         while (!file.eof())
         {
             if (Modified_Book != Book_Name)
-                file1 << " " << Book_Name << " " << Total_Book_Name << " " << Borrowed_Book << "\n";
+            {
+                file1  << Book_Name << ":" << Total_Book_Name << " " << Borrowed_Book << "\n";
+            }
             else
             {
                 cout << "\n\t\t\tMODIFY THE BOOK: " << Book_Name << endl;
@@ -231,10 +258,13 @@ void CSach::modify() // Modify details of library
                 cout << "\t\t\tUpdate Number of Books are being Borrowed: ";
                 cin >> Borrowed_Book;
 
-                file1 << " " << Book_Name << " " << Total_Book_Name << " " << Borrowed_Book << "\n";
+                file1  << Book_Name << ":" << Total_Book_Name << " " << Borrowed_Book << "\n";
                 found++;
             }
-            file >> Book_Name >> Total_Book_Name >> Borrowed_Book;
+            getline(file, Book_Name, ':');
+            file >> Total_Book_Name >> Borrowed_Book;
+            string temp2;
+            getline(file, temp2);
         }
         if (found == 0)
         {
@@ -269,26 +299,32 @@ void CSach::search() // search data of library
         cout << "\nEnter Book's Name which you want to search: ";
         cin.ignore();
         getline(cin, Find_Book);
-        
-        upper_Name(Find_Book);
-        file >> Book_Name >> Total_Book_Name >> Borrowed_Book;
+        transform(Find_Book.begin(),Find_Book.end(),Find_Book.begin(),::toupper);
+        getline(file, Book_Name, ':');
+        file >> Total_Book_Name >> Borrowed_Book;
+        string temp;
+        getline(file, temp);
         while (!file.eof())
         {
 
             if (Find_Book== Book_Name)
             {
-                cout << "\n\n\t\t\t Information of " << Book_Name << "\n";
+                cout << "\n\n\t\t\tInformation Of " << Book_Name << "\n";
                 cout << "\t\t\tTotal Books.: " << Total_Book_Name << "\n";
                 cout << "\t\t\tNumber of Books are being Borrowed: " << Borrowed_Book << "\n";
                 found++;
                 
             }
             
-                file >> Book_Name >> Total_Book_Name >> Borrowed_Book;
-                if (found == 0)
-                {
-                    cout << "\n\t\t\t Your Wanted Book Not Found....";
-                }
+            getline(file, Book_Name, ':');
+            file >> Total_Book_Name >> Borrowed_Book;
+            string temp2;
+            getline(file, temp2);
+                
+        }
+        if (found == 0)
+        {
+            cout << "\n\t\t\t Your Wanted Book Not Found....";
         }
         
         file.close();
@@ -315,19 +351,25 @@ void CSach::deleted() // deleted data of library
         cin.ignore();
         getline(cin, Deleted_Book);
         file1.open("record.txt", ios::app | ios::out);
-        file >> Book_Name >> Total_Book_Name >> Borrowed_Book;
+        getline(file, Book_Name, ':');
+        file >> Total_Book_Name >> Borrowed_Book;
+        string temp;
+        getline(file, temp);
         while (!file.eof())
         {
             if (Deleted_Book != Book_Name)
             {
-                file1 << " " << Book_Name << " " << Total_Book_Name << " " << Borrowed_Book << "\n";
+                file1 << Book_Name << ":" << Total_Book_Name << " " << Borrowed_Book << "\n";
             }
             else
             {
                 found++;
                 cout << "\n\t\t\tSuccessfully Delete Data\n";
             }
-            file >> Book_Name >> Total_Book_Name >> Borrowed_Book;
+            getline(file, Book_Name, ':');
+            file >> Total_Book_Name >> Borrowed_Book;
+            string temp2;
+            getline(file, temp2);
         }
         if (found == 0)
         {
@@ -352,7 +394,10 @@ void CSach::Book_Existing()
         file.close();
     }
     else {
-        file >> Book_Name >> Total_Book_Name >> Borrowed_Book;
+        getline(file, Book_Name, ':');
+        file >> Total_Book_Name >> Borrowed_Book;
+        string temp;
+        getline(file, temp);
         while (!file.eof())
         {
             if (Rest_Book() > 0)
@@ -362,11 +407,15 @@ void CSach::Book_Existing()
                 cout << "\t\t\tBooks are being Borrowed:" << Borrowed_Book << endl;
                 cout << "\t\t\tNumbers of " << Book_Name << " are available:" << Rest_Book() << "\n\n";
                 check_available++;
-                file >> Book_Name >> Total_Book_Name >> Borrowed_Book;
+                
+
             }
-            else {
-                file >> Book_Name >> Total_Book_Name >> Borrowed_Book;
-            }
+            
+                getline(file, Book_Name, ':');
+                file >> Total_Book_Name >> Borrowed_Book;
+                string temp2;
+                getline(file, temp2);
+            
         }
         if (check_available == 0)
         {
@@ -378,7 +427,7 @@ void CSach::Book_Existing()
 void CSach::input_data_to_file()
 {
     system("cls");
-    fstream filein, fileout;
+    fstream filein, fileout,fileout_check;
     filein.open("Data.txt", ios::in);
     if (!filein)
     {
@@ -386,13 +435,23 @@ void CSach::input_data_to_file()
         filein.close();
     }
     else {
-        filein >> Book_Name >> Total_Book_Name >> Borrowed_Book;
+        getline(filein, Book_Name, ':');
+        filein >> Total_Book_Name >> Borrowed_Book;
+        string temp;
+        getline(filein, temp);
+        
+
         fileout.open("LibraryRecord.txt", ios::app | ios::out);
         while (!filein.eof())
         {
-            upper_Name(Book_Name);
-            fileout << Book_Name << " " << Total_Book_Name << " " << Borrowed_Book << "\n";
-            filein >> Book_Name >> Total_Book_Name >> Borrowed_Book;
+            transform(Book_Name.begin(), Book_Name.end(), Book_Name.begin(), ::toupper);
+            //fileout_check.open();
+            fileout << Book_Name << ":" << Total_Book_Name << " " << Borrowed_Book << "\n";
+            
+            getline(filein, Book_Name, ':');
+            filein >> Total_Book_Name >> Borrowed_Book;
+            string temp2;
+            getline(filein, temp2);
         }
         cout << "\t\t\t Data inputed successfully...\n";
 
