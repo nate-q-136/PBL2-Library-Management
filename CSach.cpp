@@ -10,6 +10,8 @@
 #include<iostream>
 #pragma warning (disable:4996)
 using namespace std;
+char check[10] = { '0','1','2','3','4','5','6','7','8','9' };
+    
 int CSach::Rest_Book()
 {
     return Total_Book_Name - Borrowed_Book;
@@ -122,6 +124,7 @@ menustart:
     case '7':
         input_data_to_file();
         cout << "Press any key to back to Menu...";
+        cin.ignore();
         getch();
         goto menustart;
         break;
@@ -149,9 +152,11 @@ void CSach::insert() // Add books details
     getline(cin,Book_Name);
     //upper_Name(Book_Name);
     transform(Book_Name.begin(), Book_Name.end(), Book_Name.begin(), ::toupper);
-    
+    info1:
     cout << "\t\t\tEnter Total Books: ";
     cin >> Total_Book_Name;
+    
+    info2:
     cout << "\t\t\tEnter Books are being borrowed: ";
     cin >> Borrowed_Book;
     file.open("LibraryRecord.txt", ios::app | ios::out);
@@ -450,6 +455,7 @@ void CSach::input_data_to_file()
         filein.close();
     }
     else {
+        
         getline(filein, Book_Name, ':');
         filein >> Total_Book_Name >> Borrowed_Book;
         string temp;
