@@ -10,7 +10,7 @@
 #include<iostream>
 #pragma warning (disable:4996)
 using namespace std;
-char check[10] = { '0','1','2','3','4','5','6','7','8','9' };
+
     
 int CSach::Rest_Book()
 {
@@ -63,7 +63,11 @@ menustart:
         goto menustart;
         break;
     case '1':
-
+        if (Num_Name_Book<=0)
+        {
+            cout << "Please choose Option 0 in Menu to initialize Number of Books Data To Add!\n";
+            goto backmenu;
+        }
         do
         {
             if (Num_Name_Book>0)
@@ -77,7 +81,7 @@ menustart:
                 
             }
             else {
-                cout << "Exceed The Number Of Required Books Names! ";
+                cout << "Exceed The Number Of Required Books Data! ";
                 cout << "Press any key to back to Menu...";
                 getch();
                 goto menustart;
@@ -85,6 +89,7 @@ menustart:
             }
 
         } while (x == 'y' || x == 'Y');
+        backmenu:
         cout << "Press any key to back to Menu...";
         getch();
         goto menustart;
@@ -154,11 +159,33 @@ void CSach::insert() // Add books details
     transform(Book_Name.begin(), Book_Name.end(), Book_Name.begin(), ::toupper);
     info1:
     cout << "\t\t\tEnter Total Books: ";
-    cin >> Total_Book_Name;
+    string s;
+    
+    getline(cin, s);
+    for (int i = 0; i < s.length(); i++)
+    {
+        if (s[i] != '0' && s[i] != '1' && s[i] != '2' && s[i] != '3' && s[i] != '4' && s[i] != '5' && s[i] != '6' && s[i] != '7' && s[i] != '8' && s[i] != '9')
+        {
+            cout << "\t\t\t\tOnly number please... Try again!\n";
+            goto info1;
+        }
+    }
+     Total_Book_Name=stoi(s);
     
     info2:
     cout << "\t\t\tEnter Books are being borrowed: ";
-    cin >> Borrowed_Book;
+    string s2;
+
+    getline(cin, s2);
+    for (int i = 0; i < s2.length(); i++)
+    {
+        if (s2[i] != '0' && s2[i] != '1' && s2[i] != '2' && s2[i] != '3' && s2[i] != '4' && s2[i] != '5' && s2[i] != '6' && s2[i] != '7' && s2[i] != '8' && s2[i] != '9')
+        {
+            cout << "\t\t\t\tOnly number please... Try again!\n";
+            goto info2;
+        }
+    }
+    Borrowed_Book=stoi(s2);
     file.open("LibraryRecord.txt", ios::app | ios::out);
     fstream file1;
     file1.open("check.txt", ios::in);
@@ -272,10 +299,35 @@ void CSach::modify() // Modify details of library
             else
             {
                 cout << "\n\t\t\tMODIFY THE BOOK: " << Book_Name << endl;
+                updateinfo1:
                 cout << "\t\t\tUpdate Total: ";
-                cin >> Total_Book_Name;
+                string s;
+
+                getline(cin, s);
+                for (int i = 0; i < s.length(); i++)
+                {
+                    if (s[i] != '0' && s[i] != '1' && s[i] != '2' && s[i] != '3' && s[i] != '4' && s[i] != '5' && s[i] != '6' && s[i] != '7' && s[i] != '8' && s[i] != '9')
+                    {
+                        cout << "\t\t\t\tOnly number please... Try again!\n";
+                        goto updateinfo1;
+                    }
+                }
+                Total_Book_Name = stoi(s);
+                updateinfo2:
                 cout << "\t\t\tUpdate Number of Books are being Borrowed: ";
-                cin >> Borrowed_Book;
+                string s2;
+
+                getline(cin, s2);
+                for (int i = 0; i < s.length(); i++)
+                {
+                    if (s2[i] != '0' && s2[i] != '1' && s2[i] != '2' && s2[i] != '3' && s2[i] != '4' && s2[i] != '5' && s2[i] != '6' && s2[i] != '7' && s2[i] != '8' && s2[i] != '9')
+                    {
+                        cout << "\t\t\t\tOnly number please... Try again!\n";
+                        goto updateinfo2;
+                    }
+                }
+                Borrowed_Book = stoi(s2);
+                
 
                 file1  << Book_Name << ":" << Total_Book_Name << " " << Borrowed_Book << "\n";
                 found++;
