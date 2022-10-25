@@ -1,0 +1,9 @@
+Dac Nhan tam:20 2
+Naruto:99 1
+De men phieu luu ki:98 4
+Noi nay co anh:95 6
+so do:12 12
+truyen kieu:13 12
+tat den:15 14
+Naruto 2: 77 76
+end: 0 0
