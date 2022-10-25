@@ -129,7 +129,7 @@ menustart:
         break;
     case '7':
         input_data_to_file();
-        cout << "Press any key to back to Menu...";
+        cout << "Press any Enter twice to back to Menu...";
         cin.ignore();
         getch();
         goto menustart;
@@ -588,8 +588,20 @@ void CSach::input_data_to_file()
         {
             cout << check_name[i] << endl;
         }
-
-        filein2.open("Data.txt", ios::in);
+        cin.ignore();
+        inputfile:
+        cout << "Enter file you want to input data:";
+        string filename;
+        
+        getline(cin, filename);
+        filein2.open(filename, ios::in);
+        if (!filein2)
+        {
+            cout << "Can't find your input file...Please press Enter to try again!";
+            string space;
+            getline(cin, space);
+            goto inputfile;
+        }
         getline(filein2, Book_Name, ':');
         filein2 >> Total_Book_Name >> Borrowed_Book;
         string temp2;
@@ -649,23 +661,6 @@ void CSach::input_data_to_file()
             }
         }
 
-            
-
-        //fileout.open("LibraryRecord.txt", ios::app | ios::out);
-       // while (!filein2.eof())
-        //{
-           // transform(Book_Name.begin(), Book_Name.end(), Book_Name.begin(), ::toupper);
-            
-           // fileout << Book_Name << ":" << Total_Book_Name << " " << Borrowed_Book << "\n";
-           //fileinnext:
-           // getline(filein2, Book_Name, ':');
-           // filein2 >> Total_Book_Name >> Borrowed_Book;
-           // string temp2;
-          //  getline(filein2, temp2);
-        //}
-       // cout << "\t\t\t Data inputed successfully...\n";
-
-    }
     //filein.close();
     filein2.close();
     fileout.close();
