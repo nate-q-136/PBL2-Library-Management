@@ -13,6 +13,7 @@ private:
 public:
     CSach() {};
     CSach(string, int, int, int) {};
+    string getCorrect_Book_Name(string&);
     int getNum_Name_Book();
     int Rest_Book();
     void Book_Existing();
