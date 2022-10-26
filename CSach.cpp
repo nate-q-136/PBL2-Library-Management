@@ -10,6 +10,7 @@
 #include<winbgim.h>
 #pragma warning (disable:4996)
 using namespace std;
+//input, sort data according to name
 
     
 int CSach::Rest_Book()
@@ -45,13 +46,14 @@ menustart:
     cout << "\t\t\t 5. Delete 1 Book Record" << endl;
     cout << "\t\t\t 6. Show Available Books" << endl;
     cout << "\t\t\t 7. Input Data from Data.txt" << endl;
-    cout << "\t\t\t 8. Exit\n"
+    cout << "\t\t\t 8. Sort All Names of Books" << endl;
+    cout << "\t\t\t 9. Exit\n"
         << endl;
 
     cout << "\t\t\t............................" << endl;
     cout << "\t\t\tChoose Options:[1/2/3/4/5/6]" << endl;
     cout << "\t\t\t............................" << endl;
-    cout << " Enter Your Choose: ";
+    cout << " Enter Your Choice: ";
     cin >> choice;
     switch (choice)
     {
@@ -135,6 +137,12 @@ menustart:
         goto menustart;
         break;
     case '8':
+        sort_Name();
+        cout << "Press any Enter twice to back to Menu...";
+        getch();
+        goto menustart;
+
+    case '9':
         cout << "\n\t\t\t Program Is Exit";
         exit(0);
 
@@ -555,6 +563,7 @@ void CSach::Book_Existing()
     }
     file.close();
 }
+
 void CSach::input_data_to_file()
 {
     system("cls");
@@ -572,10 +581,10 @@ void CSach::input_data_to_file()
         string temp;
         getline(filein, temp);
         transform(Book_Name.begin(), Book_Name.end(), Book_Name.begin(), ::toupper);
-        vector<string> check_name;
+        vector<string> Total_name;
         while (!filein.eof())
         {
-            check_name.push_back(Book_Name);
+            Total_name.push_back(Book_Name);
             getline(filein, Book_Name, ':');
             transform(Book_Name.begin(), Book_Name.end(), Book_Name.begin(), ::toupper);
             filein >> Total_Book_Name >> Borrowed_Book;
@@ -584,10 +593,10 @@ void CSach::input_data_to_file()
 
         }
         filein.close();
-        for (int i = 0; i < check_name.size(); i++)
-        {
-            cout << check_name[i] << endl;
-        }
+       // for (int i = 0; i < Total_name.size(); i++)
+       // {
+         //   cout << Total_name[i] << endl;
+        //}
         cin.ignore();
         inputfile:
         cout << "Enter file you want to input data:";
@@ -614,12 +623,12 @@ void CSach::input_data_to_file()
         while (!filein2.eof())
         {
            
-                for (int j = 0; j < check_name.size(); j++)
+                for (int j = 0; j < Total_name.size(); j++)
                 {
-                    if (Book_Name == check_name[j])
+                    if (Book_Name == Total_name[j])
                     {
                         found++;
-                        existed_name.push_back(check_name[j]);
+                        existed_name.push_back(Total_name[j]);
                     }
                 }
                 //if (Book_Name == check_name[i])
@@ -661,8 +670,140 @@ void CSach::input_data_to_file()
             }
         }
 
+
+    }
     //filein.close();
     filein2.close();
     fileout.close();
     
 }
+void CSach::sort_Name()
+{
+    system("cls");
+    vector<string> Total_name;
+    vector<int>Total_Number;
+    vector<int>Total_Borrowed_number;
+    fstream filein_vector;
+    filein_vector.open("LibraryRecord.txt", ios::in);
+    getline(filein_vector, Book_Name, ':');
+    filein_vector >> Total_Book_Name >> Borrowed_Book;
+    string temp2;
+    getline(filein_vector, temp2);
+    transform(Book_Name.begin(), Book_Name.end(), Book_Name.begin(), ::toupper);
+    Total_name.push_back(Book_Name);
+    Total_Number.push_back(Total_Book_Name);
+    Total_Borrowed_number.push_back(Borrowed_Book);
+    while (!filein_vector.eof())
+    {
+        getline(filein_vector, Book_Name, ':');
+        transform(Book_Name.begin(), Book_Name.end(), Book_Name.begin(), ::toupper);
+        filein_vector >> Total_Book_Name >> Borrowed_Book;
+        string temp4;
+        getline(filein_vector, temp4);
+        Total_name.push_back(Book_Name);
+        Total_Number.push_back(Total_Book_Name);
+        Total_Borrowed_number.push_back(Borrowed_Book);
+    }
+    filein_vector.close();
+    cout << "Press 1 to sort all the books names by ascending | Press 0 to sort all the books name by descending\n";
+    char choice3;
+    cout << "Your choice:"; cin >> choice3;
+    int size = Total_name.size(); size = size - 1;
+    switch (choice3)
+    {
+    
+        case '0':
+        {
+            qsort(Total_name, Total_Number, Total_Borrowed_number, 0, size, descending);
+            fstream filechange;
+            filechange.open("change.txt", ios::app | ios::out);
+           // for (int i = 0; i < Total_name.size()-1; i++)
+            //{
+            //    cout << Total_name[i] << ":" << Total_Number[i] << " " << Total_Borrowed_number[i] << endl;
+            //}
+            for (int i = 0; i < Total_name.size()-1; i++)//size()-1 to delete a garbage data in the end of vector
+            {
+                filechange << Total_name[i] << ":" << Total_Number[i] << " " << Total_Borrowed_number[i] << "\n";
+            }
+            filechange.close();
+            remove("LibraryRecord.txt");
+            rename("change.txt", "LibraryRecord.txt");
+            cout << "Sort all the books name by descending Successfully!" << endl;
+            break;
+        }
+
+        
+        case '1':
+        {
+            qsort(Total_name, Total_Number, Total_Borrowed_number, 0, size, ascending);
+            fstream filechange;
+            filechange.open("change.txt", ios::app | ios::out);
+            //for (int i = 1; i < Total_name.size(); i++)
+           // {
+            //    cout << Total_name[i] << ":" << Total_Number[i] << " " << Total_Borrowed_number[i] << endl;
+            //}
+            for (int i = 1; i < Total_Number.size(); i++)//i=1 to delete a garbage data in the start of vector
+            {
+                filechange << Total_name[i] << ":" << Total_Number[i] << " " << Total_Borrowed_number[i] << "\n";
+            }
+            filechange.close();
+            remove("LibraryRecord.txt");
+            rename("change.txt", "LibraryRecord.txt");
+            cout << "Sort all the books name by ascending Successfully!" << endl;
+            break;
+        }
+    }
+}
+bool ascending(const string& a, const string& b)
+{
+    return a < b;
+}
+bool descending(const string& a, const string& b)
+{
+    return a > b;
+}
+void CSach::qsort(vector<string>& a, vector<int>&b,vector<int>&c,int left, int right, bool comp(const string&, const string&))
+{
+    string p = a[(left + right) / 2];
+    int p2=b[(left + right) / 2];
+    int p3=c[(left + right) / 2];
+    int i = left, j = right;
+    while (i < j)
+    {
+        while (comp(a[i], p))
+        {
+            i++;
+        }
+        while (comp(p, a[j]))
+        {
+            j--;
+        }
+        if (i <= j)
+        {
+            string temp = a[i];
+            a[i] = a[j];
+            a[j] = temp;
+
+            int temp2 = b[i];
+            b[i] = b[j];
+            b[j] = temp2;
+
+            int temp3 = c[i];
+            c[i] = c[j];
+            c[j] = temp3;
+            i++;
+            j--;
+
+        }
+    }
+    if (i < right)
+    {
+        qsort(a,b,c, i, right, comp);
+    }
+    if (left < j)
+    {
+        qsort(a,b,c, left, j, comp);
+    }
+}
+
+
