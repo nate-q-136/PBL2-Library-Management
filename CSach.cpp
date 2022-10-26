@@ -705,6 +705,7 @@ void CSach::sort_Name()
         Total_Borrowed_number.push_back(Borrowed_Book);
     }
     filein_vector.close();
+    sortchoice:
     cout << "Press 1 to sort all the books names by ascending | Press 0 to sort all the books name by descending\n";
     char choice3;
     cout << "Your choice:"; cin >> choice3;
@@ -751,6 +752,12 @@ void CSach::sort_Name()
             rename("change.txt", "LibraryRecord.txt");
             cout << "Sort all the books name by ascending Successfully!" << endl;
             break;
+        }
+        default:
+        {
+            cout << "Invalid choice...press Enter to try again!" << endl;
+            
+            goto sortchoice;
         }
     }
 }
