@@ -6,4 +6,5 @@ so do:12 12
 truyen kieu:13 12
 tat den:15 14
 Naruto 2: 77 76
+New 2: 23 22
 end: 0 0
